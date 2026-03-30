@@ -1,4 +1,4 @@
-package com.myapp;
+package com.vuzt;
 
 import android.app.Activity;
 import android.os.Bundle;

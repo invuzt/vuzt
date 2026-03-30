@@ -24,8 +24,8 @@ Versi modern dari project "smallest android app" yang dikonversi ke standar 2026
 ### Langkah
 ```bash
 # Clone repo
-git clone https://github.com/username/myapp.git
-cd myapp
+git clone https://github.com/username/vuzt.git
+cd vuzt
 
 # Build debug APK
 ./gradlew assembleDebug
@@ -54,7 +54,7 @@ Setelah download `app-debug.apk` dari GitHub Actions:
 ## Struktur project
 
 ```
-myapp/
+vuzt/
 ├── .github/
 │   └── workflows/
 │       └── build.yml        ← GitHub Actions CI
@@ -62,7 +62,7 @@ myapp/
 │   ├── build.gradle
 │   └── src/main/
 │       ├── AndroidManifest.xml
-│       ├── java/com/myapp/
+│       ├── java/com/vuzt/
 │       │   └── MainActivity.java
 │       └── res/
 │           ├── layout/activity_main.xml

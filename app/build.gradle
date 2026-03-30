@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.myapp'
+    namespace 'com.vuzt'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.myapp"
+        applicationId "com.vuzt"
         minSdk 23
         targetSdk 34
         versionCode 1
