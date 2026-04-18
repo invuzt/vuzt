@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="data:application/manifest+json,{'name':'WasmCalc','short_name':'Calc','start_url':'index.html','display':'standalone','background_color':'#121212','theme_color':'#1e1e1e'}">
+    <title>Modern Wasm</title>
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { 
+            background: #121212; 
+            color: #e0e0e0; 
+            font-family: 'Segoe UI', Roboto, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-end; 
+            height: 100vh; 
+            margin: 0; 
+            padding: 20px 20px 40px 20px;
+        }
+        #d { 
+            background: transparent; 
+            border: none; 
+            color: #fff; 
+            padding: 20px; 
+            text-align: right; 
+            width: 100%; 
+            max-width: 400px;
+            font-size: 4rem; 
+            outline: none;
+            font-weight: 300;
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 15px; 
+            width: 100%; 
+            max-width: 400px;
+        }
+        button { 
+            background: #1e1e1e; 
+            border: none; 
+            color: #fff; 
+            aspect-ratio: 1; 
+            cursor: pointer; 
+            font-size: 1.5rem;
+            border-radius: 50%; /* Tombol Bulat Modern */
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        button:active { background: #333; }
+        /* Warna untuk operator */
+        button:nth-child(4n), button:last-child { 
+            color: #ff9f0a; 
+            font-size: 1.8rem;
+        }
+        /* Tombol C */
+        button:nth-child(14) { color: #ff453a; }
+        /* Tombol = */
+        button:nth-child(15) { background: #ff9f0a; color: #fff; }
+        button:nth-child(15):active { background: #ffb340; }
+    </style>
+</head>
+<body>
+    <input id="d" readonly placeholder="0">
+    <div class="grid" onclick="btn(event)">
+        <button>7</button><button>8</button><button>9</button><button>÷</button>
+        <button>4</button><button>5</button><button>6</button><button>×</button>
+        <button>1</button><button>2</button><button>3</button><button>−</button>
+        <button>0</button><button>C</button><button>=</button><button>+</button>
+    </div>
+    <script>
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+        let calc;
+        fetch('lib.wasm').then(r => r.arrayBuffer()).then(b => WebAssembly.instantiate(b)).then(m => {
+            calc = m.instance.exports.a;
+        });
+        const d = document.getElementById('d');
+        function btn(e) {
+            const v = e.target.innerText;
+            if(!v || e.target.tagName !== 'BUTTON') return;
+            if(v === '=') { 
+                try { 
+                    // Ganti simbol visual ke operator matematika untuk eval
+                    let expr = d.value.replace('×', '*').replace('÷', '/');
+                    d.value = eval(expr); 
+                } catch { d.value = 'Error'; } 
+            } else if(v === 'C') { d.value = ''; }
+            else { d.value += v; }
+        }
+    </script>
+</body>
+</html>

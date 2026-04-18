@@ -2,33 +2,33 @@ package com.vuzt;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        
+        // Membuat WebView secara programmatik agar memenuhi layar
+        WebView myWebView = new WebView(this);
+        setContentView(myWebView);
 
-        EditText inputNama = findViewById(R.id.inputNama);
-        Button btnSapa = findViewById(R.id.btnSapa);
+        WebSettings webSettings = myWebView.getSettings();
+        
+        // PENTING: Aktifkan JavaScript untuk menjalankan logika kalkulator
+        webSettings.setJavaScriptEnabled(true);
+        
+        // PENTING: Aktifkan DOM Storage agar Service Worker (PWA) bisa jalan
+        webSettings.setDomStorageEnabled(true);
+        
+        // Mencegah browser eksternal terbuka saat ada link diklik
+        myWebView.setWebViewClient(new WebViewClient());
 
-        btnSapa.setOnClickListener(v -> {
-            // Animasi membal (Fluid Scale)
-            v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).withEndAction(() -> {
-                v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
-                
-                String nama = inputNama.getText().toString().trim();
-                if (nama.isEmpty()) {
-                    Toast.makeText(this, "Tulis namamu dulu ya", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Halo, " + nama + "!", Toast.LENGTH_SHORT).show();
-                }
-            }).start();
-        });
+        // Memuat file HTML dari folder assets
+        myWebView.loadUrl("file:///android_asset/index.html");
     }
 }
+
