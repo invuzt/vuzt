@@ -25,10 +25,10 @@ jobs:
 
       - name: Build with Gradle
         run: |
-          # Ambil path NDK yang tersedia dan masukkan ke local.properties
-          NDK_PATH=$(ls -d $ANDROID_HOME/ndk/* | head -1)
-          echo "ndk.dir=$NDK_PATH" > local.properties
-          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          # Ambil path SDK & NDK secara otomatis tanpa peduli versinya
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          NDK_PATH=$(ls -d $ANDROID_HOME/ndk/* | tail -1)
+          echo "ndk.dir=$NDK_PATH" >> local.properties
           
           chmod +x gradlew
           ./gradlew assembleDebug

@@ -6,7 +6,6 @@ plugins {
 android {
     namespace 'com.vuzt'
     compileSdk 34
-    ndkVersion "27.0.12077973"
 
     defaultConfig {
         applicationId "com.vuzt"
@@ -15,6 +14,8 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    // KITA HAPUS ndkVersion DI SINI AGAR TIDAK BENTROK
 
     buildTypes {
         release {
@@ -27,19 +28,14 @@ android {
 }
 
 cargo {
-    module  = "../rust"       // Lokasi Cargo.toml
-    libname = "pemanasan_jni" // Harus sama dengan [lib] name di Cargo.toml
-    targets = ["arm64"]       // Kita fokus ke ARM64 dulu agar cepat
-    profile = "release"       // Biar hasil Rust-nya kencang
+    module  = "../rust"
+    libname = "pemanasan_jni"
+    targets = ["arm64"]
+    profile = "release"
 }
 
-// Otomatis jalankan cargoBuild sebelum compile Java
 tasks.whenTaskAdded { task ->
     if ((task.name == 'javaPreCompileDebug' || task.name == 'javaPreCompileRelease')) {
         task.dependsOn 'cargoBuild'
     }
-}
-
-dependencies {
-    // Tidak butuh dependensi tambahan untuk Rust
 }
