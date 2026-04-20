@@ -7,41 +7,37 @@
 <body>
 
     <header>
-        <h1 id="headerTitle">Dashboard</h1>
+        <h1 id="headerTitle">monitor</h1>
     </header>
 
     <div id="content-area">
         <div id="pageHome" class="page active">
             <div class="card">
-                <div style="color: var(--text-dim); font-size: 12px;">Memory Usage</div>
-                <div id="ramValue" style="font-size: 28px; font-weight: 700; margin: 8px 0;">-- / --</div>
-                <div id="graph" style="display:flex; align-items:flex-end; height:40px; gap:3px;">
-                    </div>
+                <div style="color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 1px;">Usage Frequency</div>
+                <div id="ramValue" style="font-size: 32px; font-weight: 300; margin: 12px 0; letter-spacing: -1px;">-- / --</div>
+                <div id="graph" style="display:flex; align-items:flex-end; height:30px; gap:4px; margin-top:15px;">
+                </div>
             </div>
         </div>
 
         <div id="pageNotes" class="page">
             <div id="noteList"></div>
-            <div style="height: 80px;"></div> </div>
+        </div>
     </div>
 
-    <button id="fab" onclick="openEditor()" style="display:none; position:fixed; right:24px; bottom:100px; width:56px; height:56px; border-radius:28px; background:var(--primary); border:none; font-size:24px; box-shadow:0 8px 16px rgba(0,0,0,0.4);">+</button>
+    <div id="fab" onclick="openEditor()" style="display:none; position:fixed; right:30px; bottom:110px; color:var(--text-main); font-size:32px; font-weight:200; cursor:pointer;">+</div>
 
     <nav class="nav-bar">
-        <div class="nav-item active" onclick="nav('pageHome', 'Dashboard', this)">
-            <i>📊</i><span>System</span>
-        </div>
-        <div class="nav-item" onclick="nav('pageNotes', 'Vault', this)">
-            <i>📝</i><span>Notes</span>
-        </div>
+        <div class="nav-item active" onclick="nav('pageHome', 'monitor', this)">Monitor</div>
+        <div class="nav-item" onclick="nav('pageNotes', 'notes', this)">Notes</div>
     </nav>
 
-    <div id="editor" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--bg); z-index:100; padding:40px 20px;">
-        <input type="text" id="noteTitle" placeholder="Title" style="width:100%; background:none; border:none; color:white; font-size:24px; margin-bottom:20px; outline:none;">
-        <textarea id="noteContent" placeholder="Start typing..." style="width:100%; height:70%; background:none; border:none; color:var(--text-dim); font-size:16px; outline:none; resize:none;"></textarea>
-        <div style="display:flex; gap:10px;">
-            <button onclick="closeEditor()" style="flex:1; background:var(--surface); color:white; border:none; padding:15px; border-radius:12px;">Cancel</button>
-            <button onclick="saveNote()" style="flex:2; background:var(--primary); color:black; border:none; padding:15px; border-radius:12px; font-weight:600;">Save</button>
+    <div id="editor" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:var(--surface); z-index:100; padding:60px 30px;">
+        <input type="text" id="noteTitle" placeholder="Entry Title" style="width:100%; background:none; border:none; color:var(--text-main); font-size:28px; font-weight:600; margin-bottom:30px; outline:none; border-bottom: 1px solid var(--border); padding-bottom:10px;">
+        <textarea id="noteContent" placeholder="Describe..." style="width:100%; height:60%; background:none; border:none; color:var(--accent); font-size:18px; outline:none; resize:none; line-height:1.6;"></textarea>
+        <div style="display:flex; gap:20px; margin-top:30px;">
+            <button onclick="closeEditor()" style="flex:1; background:none; border:1px solid var(--border); padding:18px; border-radius:8px; font-size:14px;">Dismiss</button>
+            <button onclick="saveNote()" style="flex:2; background:var(--primary); color:white; border:none; padding:18px; border-radius:8px; font-size:14px; font-weight:600;">Confirm</button>
         </div>
     </div>
 
@@ -56,26 +52,25 @@
             if(pageId === 'pageNotes') renderNotes();
         }
 
-        // RAM Logika (Minimalis)
         function updateRam() {
             try {
                 let data = Android.getRamData().split('|');
-                document.getElementById('ramValue').innerText = `${(data[1]/1024/1024).toFixed(1)}GB / ${(data[0]/1024/1024).toFixed(1)}GB`;
-                // Simple Graph
+                let usedGB = ((data[0]-data[1])/1024/1024).toFixed(1);
+                let totalGB = (data[0]/1024/1024).toFixed(1);
+                document.getElementById('ramValue').innerText = `${usedGB} / ${totalGB} GB`;
+                
                 let bar = document.createElement('div');
-                bar.style.width = '100%';
+                bar.style.flex = '1';
                 bar.style.background = 'var(--primary)';
                 bar.style.height = (1 - (data[1]/data[0])) * 100 + '%';
-                bar.style.borderRadius = '2px';
+                bar.style.opacity = '0.1';
                 let graph = document.getElementById('graph');
                 graph.appendChild(bar);
-                if(graph.children.length > 20) graph.removeChild(graph.firstChild);
+                if(graph.children.length > 25) graph.removeChild(graph.firstChild);
             } catch(e) {}
         }
         setInterval(updateRam, 2000);
 
-        // Notes Logika (Minimalis)
-        let currentEditingFile = null;
         function renderNotes() {
             let container = document.getElementById('noteList');
             let raw = Android.getAllNotes();
@@ -84,11 +79,9 @@
             raw.split('|').forEach(file => {
                 if(!file) return;
                 let div = document.createElement('div');
-                div.className = 'card';
-                div.style.display = 'flex';
-                div.style.justifyContent = 'space-between';
-                div.innerHTML = `<div onclick="openEditor('${file}')">${file.replace('.txt','')}</div>
-                                 <div onclick="deleteNote('${file}')" style="color:#ff5252">✕</div>`;
+                div.className = 'note-item';
+                div.innerHTML = `<div onclick="openEditor('${file}')" style="font-weight:500;">${file.replace('.txt','').toLowerCase()}</div>
+                                 <div onclick="deleteNote('${file}')" style="color:var(--text-dim); font-size:12px;">remove</div>`;
                 container.appendChild(div);
             });
         }
@@ -117,7 +110,7 @@
         }
 
         function deleteNote(file) {
-            if(confirm('Delete?')) {
+            if(confirm('Delete this entry?')) {
                 Android.deleteNote(file);
                 renderNotes();
             }
