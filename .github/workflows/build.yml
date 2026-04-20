@@ -23,20 +23,22 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # PAKSA INSTALL NDK VERSI YANG DIMINTA GRADLE
-      - name: Setup Android NDK
+      # Kita hanya siapkan SDK, biarkan Gradle download NDK sendiri
+      - name: Setup Android SDK
         uses: android-actions/setup-android@v3
-        with:
-          ndk-version: '25.1.8937393'
 
       - name: Build with Gradle
         run: |
-          # Beritahu Gradle lokasi NDK yang baru saja diinstall
-          echo "sdk.dir=$ANDROID_HOME" > local.properties
-          echo "ndk.dir=$ANDROID_HOME/ndk/25.1.8937393" >> local.properties
+          # Hapus local.properties agar tidak ada info folder yang salah/hardcoded
+          rm -f local.properties
           
           chmod +x gradlew
+          # Tambahkan flag untuk menerima lisensi SDK secara otomatis
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          
           ./gradlew assembleDebug
+        env:
+          ANDROID_HOME: ${{ env.ANDROID_HOME }}
 
       - uses: actions/upload-artifact@v4
         with:

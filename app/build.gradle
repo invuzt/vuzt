@@ -6,6 +6,9 @@ plugins {
 android {
     namespace 'com.vuzt'
     compileSdk 34
+    
+    // Gunakan versi NDK yang stabil dan umum di server GitHub
+    ndkVersion "25.1.8937393"
 
     defaultConfig {
         applicationId "com.vuzt"
@@ -14,8 +17,6 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
-    // KITA HAPUS ndkVersion DI SINI AGAR TIDAK BENTROK
 
     buildTypes {
         release {
