@@ -23,12 +23,17 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      # PAKSA INSTALL NDK VERSI YANG DIMINTA GRADLE
+      - name: Setup Android NDK
+        uses: android-actions/setup-android@v3
+        with:
+          ndk-version: '25.1.8937393'
+
       - name: Build with Gradle
         run: |
-          # Ambil path SDK & NDK secara otomatis tanpa peduli versinya
+          # Beritahu Gradle lokasi NDK yang baru saja diinstall
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-          NDK_PATH=$(ls -d $ANDROID_HOME/ndk/* | tail -1)
-          echo "ndk.dir=$NDK_PATH" >> local.properties
+          echo "ndk.dir=$ANDROID_HOME/ndk/25.1.8937393" >> local.properties
           
           chmod +x gradlew
           ./gradlew assembleDebug
