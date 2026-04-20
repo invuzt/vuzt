@@ -1,5 +1,6 @@
 plugins {
     id 'com.android.application'
+    id 'org.mozilla.rust-android-gradle.rust-android'
 }
 
 android {
@@ -12,29 +13,32 @@ android {
         targetSdk 34
         versionCode 1
         versionName "1.0"
-        ndk {
-            abiFilters "armeabi-v7a"
-        }
     }
 
     buildTypes {
-        debug {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
-        }
         release {
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt')
+            minifyEnabled false
+        }
+        debug {
+            minifyEnabled false
         }
     }
+}
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+cargo {
+    module  = "../rust"       // Lokasi Cargo.toml
+    libname = "pemanasan_jni" // Harus sama dengan [lib] name di Cargo.toml
+    targets = ["arm64"]       // Kita fokus ke ARM64 dulu agar cepat
+    profile = "release"       // Biar hasil Rust-nya kencang
+}
+
+// Otomatis jalankan cargoBuild sebelum compile Java
+tasks.whenTaskAdded { task ->
+    if ((task.name == 'javaPreCompileDebug' || task.name == 'javaPreCompileRelease')) {
+        task.dependsOn 'cargoBuild'
     }
 }
 
 dependencies {
+    // Tidak butuh dependensi tambahan untuk Rust
 }

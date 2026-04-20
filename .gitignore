@@ -1,4 +1,4 @@
-rust_engine/target/
+rust/target/
 app/build/
 .gradle/
 local.properties
