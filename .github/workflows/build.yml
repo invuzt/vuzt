@@ -25,18 +25,24 @@ jobs:
 
       - name: Setup Android SDK & NDK
         run: |
-          # 1. Terima lisensi
           yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          
-          # 2. Download NDK secara manual (VERSI SPESIFIK)
           echo "Downloading NDK 25.1.8937393..."
           $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.1.8937393"
-          
-          # 3. Set environment variable agar Gradle melihatnya
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $GITHUB_ENV
 
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          # Kita tidak pakai local.properties, kita pakai environment variable saja
           ./gradlew assembleDebug
+
+      # Langkah Debug: List semua file untuk memastikan APK ada
+      - name: List Files
+        run: find . -name "*.apk"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          # Menggunakan path pencarian luas agar pasti ketemu
+          path: "**/build/outputs/apk/debug/*.apk"
+          if-no-files-found: error
