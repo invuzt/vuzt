@@ -1,43 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rust RAM Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { background: #121212; color: #00ff00; font-family: monospace; padding: 20px; }
-        .box { border: 1px solid #333; padding: 15px; border-radius: 8px; background: #1a1a1a; }
-        h2 { color: #ff9f0a; margin-top: 0; }
-        #output { white-space: pre-wrap; font-size: 1.2rem; line-height: 1.5; }
-        button { 
-            background: #ff9f0a; border: none; padding: 12px; width: 100%; 
-            color: white; font-weight: bold; border-radius: 5px; margin-top: 20px;
-        }
+        body { background: #121212; color: #e0e0e0; font-family: monospace; padding: 20px; }
+        .card { background: #1e1e1e; border-radius: 10px; padding: 15px; border-left: 5px solid #00e676; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h2 { color: #00e676; margin-top: 0; font-size: 1.2em; }
+        pre { white-space: pre-wrap; word-wrap: break-word; color: #b0bec5; font-size: 0.9em; }
+        button { background: #00e676; color: #121212; border: none; padding: 15px; width: 100%; border-radius: 5px; font-weight: bold; font-size: 1em; cursor: pointer; }
+        button:active { background: #00c853; transform: scale(0.98); }
+        .critical { color: #ff5252; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h2>System Info (Native Rust)</h2>
-        <div id="output">Menunggu data dari binary...</div>
+
+    <div class="card">
+        <h2><span style="vertical-align:middle">⚡</span> SYSTEM DASHBOARD</h2>
+        <pre id="output">Menunggu data...</pre>
     </div>
-    
-    <button onclick="updateRAM()">REFRESH RAM</button>
+
+    <button onclick="Android.jalankanBinary()">REFRESH DATA</button>
 
     <script>
-        // Fungsi ini akan dipanggil oleh Java
         function tampilkanData(data) {
-            document.getElementById('output').innerText = data;
-        }
-
-        function updateRAM() {
-            // Memanggil fungsi di Java (Interface: Android)
-            if(window.Android) {
-                window.Android.jalankanBinary();
+            let log = document.getElementById('output');
+            // Logika warna sederhana: jika baterai di bawah 20%
+            if (data.includes("Level:") && parseInt(data.split("Level: ")[1]) < 20) {
+                log.innerHTML = "<span class='critical'>" + data + "</span>";
+            } else {
+                log.innerText = data;
             }
         }
-        
-        // Jalankan sekali saat startup
-        window.onload = updateRAM;
     </script>
 </body>
 </html>
