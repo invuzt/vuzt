@@ -9,10 +9,3 @@ buildscript {
         classpath 'org.mozilla.rust-android-gradle:plugin:0.9.6'
     }
 }
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
