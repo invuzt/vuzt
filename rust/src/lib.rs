@@ -1,37 +1,36 @@
-use std::fs;
-use jni::objects::JClass;
+use jni::objects::{JClass, JString};
 use jni::sys::jstring;
 use jni::JNIEnv;
+use std::fs;
+use std::path::Path;
 
 #[no_mangle]
-pub extern "system" fn Java_com_vuzt_MainActivity_getSystemInfoNative(
+pub extern "system" fn Java_com_vuzt_MainActivity_saveNoteNative(
     env: JNIEnv,
     _class: JClass,
+    path: JString,
+    content: JString,
+) {
+    let path_str: String = env.get_string(path).expect("Gagal ambil path").into();
+    let content_str: String = env.get_string(content).expect("Gagal ambil konten").into();
+    
+    fs::write(path_str, content_str).expect("Gagal menulis file");
+}
+
+#[no_mangle]
+pub extern "system" fn Java_com_vuzt_MainActivity_readNoteNative(
+    env: JNIEnv,
+    _class: JClass,
+    path: JString,
 ) -> jstring {
-    let mut out = String::new();
+    let path_str: String = env.get_string(path).expect("Gagal ambil path").into();
+    
+    let content = if Path::new(&path_str).exists() {
+        fs::read_to_string(path_str).unwrap_or_else(|_| "".to_string())
+    } else {
+        "Belum ada catatan.".to_string()
+    };
 
-    // 1. Uptime (Lama HP nyala)
-    if let Ok(uptime) = fs::read_to_string("/proc/uptime") {
-        let secs = uptime.split_whitespace().next().unwrap_or("0");
-        let hours = secs.parse::<f32>().unwrap_or(0.0) / 3600.0;
-        out.push_str(&format!("⏱️ UPTIME: {:.2} Hours\n", hours));
-    }
-
-    // 2. Kernel Version
-    if let Ok(ver) = fs::read_to_string("/proc/version") {
-        let short_ver = ver.split_whitespace().take(3).collect::<Vec<&str>>().join(" ");
-        out.push_str(&format!("🐧 KERNEL: {}\n", short_ver));
-    }
-
-    // 3. RAM Info (Yang lama tetap ada)
-    out.push_str("\n--- MEMORY ---\n");
-    if let Ok(data) = fs::read_to_string("/proc/meminfo") {
-        for line in data.lines().take(3) {
-            out.push_str(line);
-            out.push('\n');
-        }
-    }
-
-    let response = env.new_string(out).expect("Error");
+    let response = env.new_string(content).expect("Gagal buat string");
     response.into_raw()
 }
