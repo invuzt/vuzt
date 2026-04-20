@@ -1,5 +1,4 @@
 use std::fs;
-use std::path::Path;
 
 pub fn save(path: &str, content: &str) {
     fs::write(path, content).ok();
@@ -13,7 +12,6 @@ pub fn delete(path: &str) {
     fs::remove_file(path).ok();
 }
 
-// List semua file .txt di folder privat
 pub fn list_all(dir: &str) -> String {
     let mut files = Vec::new();
     if let Ok(entries) = fs::read_dir(dir) {
@@ -26,5 +24,5 @@ pub fn list_all(dir: &str) -> String {
             }
         }
     }
-    files.join("|") // Kirim sebagai string dipisah pipa
+    files.join("|")
 }

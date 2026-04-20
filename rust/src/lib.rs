@@ -5,14 +5,16 @@ use jni::objects::{JClass, JString};
 use jni::sys::jstring;
 use jni::JNIEnv;
 
-// SAPU JAGAT: Samakan semua 'mut env: JNIEnv'
-
 #[no_mangle]
 pub extern "system" fn Java_com_vuzt_MainActivity_getSystemInfoNative(
     mut env: JNIEnv,
     _class: JClass,
 ) -> jstring {
-    let data = info::get_vault_stats(&d);
+    // Karena kita butuh stats dari folder files, kita hardcode atau 
+    // tunggu dipanggil dari fungsi yang punya konteks path.
+    // Namun untuk konsistensi dengan MainActivity.java, kita buat 
+    // placeholder atau ambil path default jika Java tidak mengirimnya.
+    let data = info::get_vault_stats("/data/data/com.vuzt/files");
     env.new_string(data).unwrap().into_raw()
 }
 
