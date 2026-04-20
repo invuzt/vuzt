@@ -23,10 +23,15 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
+      # LANGKAH PENTING: Install Android NDK
+      - name: Install Android NDK
+        run: |
+          ANDROID_NDK_VERSION=$(ls $ANDROID_HOME/ndk | head -1)
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION" >> $GITHUB_ENV
+
       - name: Build with Gradle
         run: |
           chmod +x gradlew
-          # cargoBuild akan dipanggil otomatis oleh Gradle sesuai config kita
           ./gradlew assembleDebug
 
       - uses: actions/upload-artifact@v4
