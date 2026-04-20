@@ -1,0 +1,18 @@
+[package]
+name = "vuzt_wasm"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = "0.2.92"
+# Tambahkan fitur css dan style di sini
+web-sys = { version = "0.3.69", features = [
+    "HtmlElement", 
+    "Document", 
+    "Window", 
+    "Element", 
+    "CssStyleDeclaration"
+] }

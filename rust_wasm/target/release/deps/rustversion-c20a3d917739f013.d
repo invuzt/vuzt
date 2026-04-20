@@ -1,0 +1,20 @@
+/root/vuzt/rust_wasm/target/release/deps/rustversion-c20a3d917739f013.d: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/attr.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/bound.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/constfn.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/date.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/error.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/expand.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/expr.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/iter.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/release.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/time.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/token.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/version.rs /root/vuzt/rust_wasm/target/release/build/rustversion-b4447d7b0274081d/out/version.expr
+
+/root/vuzt/rust_wasm/target/release/deps/librustversion-c20a3d917739f013.so: /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/lib.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/attr.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/bound.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/constfn.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/date.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/error.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/expand.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/expr.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/iter.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/release.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/time.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/token.rs /root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/version.rs /root/vuzt/rust_wasm/target/release/build/rustversion-b4447d7b0274081d/out/version.expr
+
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/lib.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/attr.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/bound.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/constfn.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/date.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/error.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/expand.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/expr.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/iter.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/release.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/time.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/token.rs:
+/root/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rustversion-1.0.22/src/version.rs:
+/root/vuzt/rust_wasm/target/release/build/rustversion-b4447d7b0274081d/out/version.expr:
+
+# env-dep:OUT_DIR=/root/vuzt/rust_wasm/target/release/build/rustversion-b4447d7b0274081d/out
