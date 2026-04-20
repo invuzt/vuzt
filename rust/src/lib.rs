@@ -12,7 +12,7 @@ pub extern "system" fn Java_com_vuzt_MainActivity_getSystemInfoNative(
     mut env: JNIEnv,
     _class: JClass,
 ) -> jstring {
-    let data = info::get_ram_info();
+    let data = info::get_vault_stats(&d);
     env.new_string(data).unwrap().into_raw()
 }
 
