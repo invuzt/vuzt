@@ -10,6 +10,7 @@ public class MainActivity extends Activity {
 
     static { System.loadLibrary("pemanasan_jni"); }
 
+    // Ini fungsi asli dari Rust
     public native String getSystemInfoNative();
     public native void saveNoteNative(String path, String content);
     public native String readNoteNative(String path);
@@ -25,7 +26,19 @@ public class MainActivity extends Activity {
         myWebView.loadUrl("file:///android_asset/index.html");
     }
 
-    @JavascriptInterface public String getSystemInfoNative() { return getSystemInfoNative(); }
-    @JavascriptInterface public void saveNote(String t) { saveNoteNative(filePath, t); }
-    @JavascriptInterface public String readNote() { return readNoteNative(filePath); }
+    // Nama fungsi di sini harus beda dengan yang native!
+    @JavascriptInterface 
+    public String getRamData() { 
+        return getSystemInfoNative(); 
+    }
+
+    @JavascriptInterface 
+    public void saveNote(String t) { 
+        saveNoteNative(filePath, t); 
+    }
+
+    @JavascriptInterface 
+    public String readNote() { 
+        return readNoteNative(filePath); 
+    }
 }

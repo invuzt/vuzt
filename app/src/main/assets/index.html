@@ -56,7 +56,7 @@ function showPage(pageId) {
 }
 
 function refreshRam() {
-  let data = Android.getSystemInfoNative();
+  let data = Android.getRamData();
   document.getElementById('ramOutput').innerText = data;
 }
 
