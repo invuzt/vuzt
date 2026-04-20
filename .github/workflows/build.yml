@@ -23,14 +23,13 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # LANGKAH PENTING: Install Android NDK
-      - name: Install Android NDK
-        run: |
-          ANDROID_NDK_VERSION=$(ls $ANDROID_HOME/ndk | head -1)
-          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/$ANDROID_NDK_VERSION" >> $GITHUB_ENV
-
       - name: Build with Gradle
         run: |
+          # Ambil path NDK yang tersedia dan masukkan ke local.properties
+          NDK_PATH=$(ls -d $ANDROID_HOME/ndk/* | head -1)
+          echo "ndk.dir=$NDK_PATH" > local.properties
+          echo "sdk.dir=$ANDROID_HOME" >> local.properties
+          
           chmod +x gradlew
           ./gradlew assembleDebug
 
