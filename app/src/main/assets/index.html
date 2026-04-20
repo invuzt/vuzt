@@ -1,70 +1,372 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VuztOS Dash</title>
     <style>
-        body { background: #121212; color: white; font-family: sans-serif; margin: 0; }
-        /* Sidebar */
-        .sidenav { height: 100%; width: 0; position: fixed; z-index: 1; top: 0; left: 0; background-color: #1f1f1f; overflow-x: hidden; transition: 0.3s; padding-top: 60px; }
-        .sidenav a { padding: 15px 25px; text-decoration: none; font-size: 1.2em; color: #888; display: block; transition: 0.3s; }
-        .sidenav a:hover { color: #bb86fc; }
-        .sidenav .closebtn { position: absolute; top: 0; right: 25px; font-size: 36px; margin-left: 50px; }
-        /* Main Content */
-        #main { transition: margin-left .3s; padding: 20px; }
-        .page { display: none; }
-        .active-page { display: block; }
-        .hamburger { font-size: 30px; cursor: pointer; color: #bb86fc; }
-        textarea { width: 100%; height: 150px; background: #2c2c2c; color: white; border-radius: 8px; padding: 10px; border: 1px solid #444; }
-        button { background: #bb86fc; color: black; border: none; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+        :root {
+            --bg-grad: mesh-gradient(at 10% 10%, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+            --primary: #bb86fc;
+            --secondary: #03dac6;
+            --text: #e0e0e0;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            background: #000;
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden; /* No scrolling body */
+            height: 100vh; width: 100vw;
+            display: flex; flex_direction: column;
+            /* KUNCI ZOOM DI CSS: Matikan gerakan cubit */
+            touch-action: none; 
+            -webkit-user-select: none; user-select: none;
+        }
+
+        /* Background Gradasi Mesh iOS Style */
+        .bg-mesh {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #1a1a2e;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(187, 134, 252, 0.3) 0px, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(3, 218, 198, 0.2) 0px, transparent 50%);
+            z-index: -2;
+        }
+
+        /* Efek Frosted Glass untuk Elemen Melayang */
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            margin: 15px; padding: 20px;
+        }
+
+        /* Navigasi Bawah iOS Style */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            width: 80%; max-width: 400px;
+            display: flex; justify-content: space-around;
+            padding: 10px; z-index: 100;
+        }
+
+        .nav-item {
+            font-size: 1.5rem; color: rgba(255,255,255,0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: var(--primary); transform: scale(1.1); text-shadow: 0 0 10px var(--primary); }
+
+        /* Halaman */
+        .page {
+            display: none; height: calc(100vh - 100px);
+            opacity: 0; transition: opacity 0.4s ease;
+            overflow-y: auto; /* Allow scrolling inside page only */
+            padding-bottom: 80px; box-sizing: border-box;
+        }
+
+        .page.active { display: block; opacity: 1; }
+
+        /* HOME PAGE: Server Monitor iOS 2026 */
+        #pageHome { padding-top: 40px; }
+        h1 { font-weight: 800; font-size: 1.5rem; margin-left: 20px; background: linear-gradient(90deg, #fff, var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .sys-card { display: flex; align-items: center; justify-content: space-between; }
+        .sys-label { font-size: 0.8rem; color: #888; }
+        .sys-value { font-size: 1.2rem; font-weight: 700; color: #fff; }
+
+        /* Grafik Melayang (Simplified iOS Graph style) */
+        .graph-container { height: 100px; margin-top: 15px; position: relative; }
+        .graph-bar {
+            position: absolute; bottom: 0; width: 10%;
+            background: linear-gradient(to top, var(--primary), rgba(187, 134, 252, 0));
+            border-radius: 5px 5px 0 0;
+            transition: height 0.5s ease;
+        }
+
+        /* NOTES PAGE: Modern CRUD */
+        #noteList { margin-top: 20px; }
+        .note-card {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; padding: 15px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        .note-card:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
+        .note-info { flex-grow: 1; }
+        .note-title { font-weight: 600; font-size: 1rem; color: #fff; }
+        .note-btn-group { display: flex; gap: 10px; }
+        .icon-btn { background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.6; transition: 0.2s; }
+        .icon-btn:hover { opacity: 1; }
+        .btn-edit { color: var(--secondary); }
+        .btn-delete { color: #ff5252; }
+
+        /* Fab & Modal */
+        .fab {
+            position: fixed; bottom: 100px; right: 20px;
+            width: 50px; height: 50px; background: var(--primary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #000; box-shadow: 0 4px 15px rgba(187,134,252,0.4);
+            cursor: pointer; z-index: 90;
+        }
+
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+            z-index: 200; display: none; align-items: center; justify-content: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            width: 85%; max-width: 400px;
+            background: #1a1a1a; border-radius: 20px; padding: 20px;
+            border: 1px solid var(--border);
+        }
+        input, textarea {
+            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            border-radius: 10px; color: #fff; padding: 12px; box-sizing: border-box; margin-bottom: 15px;
+            font-family: inherit;
+        }
+        textarea { height: 200px; resize: none; }
+        .btn-save {
+            width: 100%; padding: 15px; background: var(--primary); color: #000;
+            border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; color: #fff; font-size: 2rem; cursor: pointer; }
+
     </style>
 </head>
 <body>
 
-<div id="mySidenav" class="sidenav">
-  <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-  <a href="#" onclick="showPage('pageRam')">📊 RAM Info</a>
-  <a href="#" onclick="showPage('pageNotes')">📝 Secure Notes</a>
-</div>
+    <div class="bg-mesh"></div>
 
-<div id="main">
-  <span class="hamburger" onclick="openNav()">&#9776; Menu</span>
-  
-  <div id="pageRam" class="page active-page">
-    <h2>System Info</h2>
-    <pre id="ramOutput">Klik refresh...</pre>
-    <button onclick="refreshRam()">Refresh RAM</button>
-  </div>
+    <main>
+        <div id="pageHome" class="page active">
+            <h1>VuztOS // Dash</h1>
+            <div class="glass-panel sys-card">
+                <div>
+                    <div class="sys-label">AVAILABLE RAM</div>
+                    <div class="sys-value" id="availRamValue">-- GB</div>
+                </div>
+                <div>
+                    <div class="sys-label">TOTAL</div>
+                    <div class="sys-value" id="totalRamValue">-- GB</div>
+                </div>
+            </div>
+            
+            <div class="glass-panel">
+                <div class="sys-label">REAL-TIME MEMORY GRAPH (iOS '26 Style)</div>
+                <div class="graph-container" id="graphContainer">
+                    <div class="graph-bar" style="left:0%; height:20%"></div>
+                    <div class="graph-bar" style="left:15%; height:50%"></div>
+                    <div class="graph-bar" style="left:30%; height:80%"></div>
+                    <div class="graph-bar" style="left:45%; height:40%"></div>
+                    <div class="graph-bar" style="left:60%; height:90%"></div>
+                    <div class="graph-bar" style="left:75%; height:30%"></div>
+                    <div class="graph-bar" style="left:90%; height:60%"></div>
+                </div>
+            </div>
+        </div>
 
-  <div id="pageNotes" class="page">
-    <h2>Secure Notes</h2>
-    <textarea id="noteInput"></textarea>
-    <button onclick="simpanNote()">Simpan Catatan</button>
-  </div>
-</div>
+        <div id="pageNotes" class="page">
+            <h1 style="background:linear-gradient(90deg, #fff, var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Secure // Vault</h1>
+            <div id="noteList" class="glass-panel">
+                <div class="sys-label">Loading Vault...</div>
+            </div>
+            <div class="fab" onclick="openNoteModal()">+</div>
+        </div>
+    </main>
 
-<script>
-function openNav() { document.getElementById("mySidenav").style.width = "250px"; }
-function closeNav() { document.getElementById("mySidenav").style.width = "0"; }
+    <div class="modal" id="noteModal">
+        <span class="close-modal" onclick="closeNoteModal()">&times;</span>
+        <div class="modal-content">
+            <h2 id="modalTitle" style="color:var(--primary); margin-top:0;">New Note</h2>
+            <input type="text" id="noteFilename" placeholder="filename.txt (e.g., rahasia)">
+            <textarea id="noteContent" placeholder="Tulis catatan rahasia kamu di sini..."></textarea>
+            <button class="btn-save" onclick="saveCurrentNote()">SECURE & SAVE</button>
+            <input type="hidden" id="isEditMode" value="false">
+        </div>
+    </div>
 
-function showPage(pageId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-  document.getElementById(pageId).classList.add('active-page');
-  closeNav();
-  if(pageId === 'pageNotes') { 
-      document.getElementById('noteInput').value = Android.readNote();
-  }
-}
+    <nav class="bottom-nav glass-panel">
+        <div class="nav-item active" onclick="switchPage('pageHome', this)">📊</div>
+        <div class="nav-item" onclick="switchPage('pageNotes', this)">📝</div>
+    </nav>
 
-function refreshRam() {
-  let data = Android.getRamData();
-  document.getElementById('ramOutput').innerText = data;
-}
+    <script>
+        // -- CORE NAVIGATION & ZOOM PREVENTION --
+        
+        // Matikan Cubit-to-Zoom lewat JS juga (Android WebView seringkali nakal)
+        document.addEventListener('gesturestart', function (e) { e.preventDefault(); });
+        document.addEventListener('gesturechange', function (e) { e.preventDefault(); });
+        document.addEventListener('gestureend', function (e) { e.preventDefault(); });
 
-function simpanNote() {
-  let teks = document.getElementById('noteInput').value;
-  Android.saveNote(teks);
-  alert("Tersimpan!");
-}
-</script>
+        function switchPage(pageId, navEl) {
+            // Update Nav
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            navEl.classList.add('active');
+
+            // Update Page
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+
+            // Load Data
+            if(pageId === 'pageNotes') { loadNoteList(); }
+            if(pageId === 'pageHome') { startRamMonitor(); } else { stopRamMonitor(); }
+        }
+
+        // -- SYSTEM MONITOR (iOS Graphic Style) --
+        let ramInterval;
+        const availValue = document.getElementById('availRamValue');
+        const totalValue = document.getElementById('totalRamValue');
+        const graphContainer = document.getElementById('graphContainer');
+
+        function startRamMonitor() {
+            updateRamData();
+            ramInterval = setInterval(updateRamData, 2000);
+        }
+
+        function stopRamMonitor() { clearInterval(ramInterval); }
+
+        function updateRamData() {
+            try {
+                // Ambil data mentah dari Rust JNI "total|avail" dalam KB
+                let rawData = Android.getRamData(); 
+                let parts = rawData.split('|');
+                let totalKB = parseInt(parts[0]);
+                let availKB = parseInt(parts[1]);
+
+                // Convert to GB
+                let totalGB = (totalKB / 1024 / 1024).toFixed(2);
+                let availGB = (availKB / 1024 / 1024).toFixed(2);
+                let usedPercent = ((totalKB - availKB) / totalKB * 100).toFixed(0);
+
+                availValue.innerText = availGB + " GB";
+                totalValue.innerText = totalGB + " GB";
+
+                // Update Grafik Melayang
+                updateGraph(usedPercent);
+
+            } catch(e) { console.error("JNI Ram Error", e); }
+        }
+
+        function updateGraph(currentPercent) {
+            // Geser batang grafik lama, tambahkan yang baru
+            const bars = graphContainer.querySelectorAll('.graph-bar');
+            
+            // Generate tinggi random sedikit disekitar persen asli agar terlihat dinamis
+            let dynamicHeight = Math.max(10, Math.min(95, currentPercent + (Math.random()*20 - 10)));
+
+            // Shift existing bars to left
+            for(let i=0; i < bars.length - 1; i++) {
+                bars[i].style.height = bars[i+1].style.height;
+            }
+            // Set last bar to current data
+            bars[bars.length-1].style.height = dynamicHeight + "%";
+        }
+
+
+        // -- SECURE NOTES (Lengkap CRUD) --
+        const modal = document.getElementById('noteModal');
+        const noteListEl = document.getElementById('noteList');
+        const filenameInp = document.getElementById('noteFilename');
+        const contentInp = document.getElementById('noteContent');
+        const isEditInp = document.getElementById('isEditMode');
+        const modalTitleEl = document.getElementById('modalTitle');
+
+        function loadNoteList() {
+            noteListEl.innerHTML = '<div class="sys-label">Decrypting Vault...</div>';
+            try {
+                // Ambil list file mentah dipisah pipa "file1.txt|file2.txt"
+                let rawFiles = Android.getAllNotes();
+                if(!rawFiles) {
+                    noteListEl.innerHTML = '<div class="sys-label">Vault kosong. Teks (+) untuk menambah.</div>';
+                    return;
+                }
+
+                let files = rawFiles.split('|');
+                noteListEl.innerHTML = ''; // Bersihkan loading
+
+                files.forEach(filename => {
+                    if(!filename) return;
+                    let cleanName = filename.replace('.txt', ''); // Tampilkan nama bersih
+
+                    let card = document.createElement('div');
+                    card.className = 'note-card';
+                    card.innerHTML = `
+                        <div class="note-info" onclick="editNote('${filename}')">
+                            <div class="note-title">${cleanName}</div>
+                            <div class="sys-label">.txt vault</div>
+                        </div>
+                        <div class="note-btn-group">
+                            <button class="icon-btn btn-delete" onclick="deleteNoteProcess('${filename}')">🗑️</button>
+                        </div>
+                    `;
+                    noteListEl.appendChild(card);
+                });
+
+            } catch(e) { noteListEl.innerHTML = '<div class="sys-label" style="color:#ff5252">Error JNI Notes Lister</div>'; }
+        }
+
+        // CREATE
+        function openNoteModal() {
+            modalTitleEl.innerText = "Encrypt New Note";
+            filenameInp.value = ""; filenameInp.readOnly = false;
+            contentInp.value = "";
+            isEditInp.value = "false";
+            modal.classList.add('active');
+        }
+
+        function closeNoteModal() { modal.classList.remove('active'); }
+
+        function saveCurrentNote() {
+            let fname = filenameInp.value.trim();
+            let content = contentInp.value;
+
+            if(!fname) { alert("Nama file wajib diisi!"); return; }
+            if(!fname.endsWith('.txt')) { fname += '.txt'; } // Paksa ekstensi .txt
+
+            try {
+                // Panggil JNI Save (bisa create, bisa overwrite/update)
+                Android.saveNote(fname, content);
+                closeNoteModal();
+                loadNoteList(); // Refresh list
+            } catch(e) { alert("Gagal menyimpan ke Native Vault."); }
+        }
+
+        // READ & UPDATE (EDIT)
+        function editNote(filename) {
+            try {
+                let content = Android.readNote(filename);
+                modalTitleEl.innerText = "Edit Secure Note";
+                filenameInp.value = filename; filenameInp.readOnly = true; // Jangan ubah nama file saat edit
+                contentInp.value = content;
+                isEditInp.value = "true";
+                modal.classList.add('active');
+            } catch(e) { alert("Gagal membaca file native."); }
+        }
+
+        // DELETE
+        function deleteNoteProcess(filename) {
+            if(confirm(`Hapus permanen file '${filename}'?`)) {
+                try {
+                    Android.deleteNote(filename);
+                    loadNoteList(); // Refresh list
+                } catch(e) { alert("Gagal menghapus file native."); }
+            }
+        }
+
+        // Init Monitoring saat buka
+        window.onload = startRamMonitor;
+
+    </script>
 </body>
 </html>
