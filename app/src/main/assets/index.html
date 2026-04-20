@@ -1,29 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <link rel="stylesheet" href="style.css">
     <style>
         :root { --bg: #F2F2F7; --white: #FFF; --blue: #007AFF; }
         body { 
             background: var(--bg); 
-            font-family: -apple-system, sans-serif; 
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
             margin: 0; 
-            /* Perbaikan posisi: Tambah padding safe area agar tidak mentok kamera */
-            padding: calc(20px + env(safe-area-inset-top)) 16px 40px 16px; 
+            /* Tambah padding atas lebih besar untuk menghindari notch/status bar */
+            padding: calc(44px + env(safe-area-inset-top)) 16px 40px 16px; 
         }
-        h1 { font-size: 34px; margin: 0 0 20px 8px; font-weight: 700; }
-        .group { background: var(--white); border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 0.5px solid #C6C6C8; }
+        h1 { font-size: 34px; margin: 0 0 20px 8px; font-weight: 700; color: #000; }
+        .group { background: var(--white); border-radius: 12px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .row { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 0.5px solid #C6C6C8; cursor: pointer; }
         .row:last-child { border-bottom: none; }
         .details { display: none; padding: 14px 16px; background: #F9F9F9; font-size: 15px; color: #3C3C43; border-top: 0.5px solid #C6C6C8; }
-        
         .slider-container { flex: 1; margin: 0 15px; display: flex; align-items: center; }
         .slider-input { width: 100%; -webkit-appearance: none; background: #D1D1D6; height: 4px; border-radius: 2px; outline: none; }
         .slider-input::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; background: #FFF; border-radius: 50%; box-shadow: 0 3px 8px rgba(0,0,0,0.2); border: 0.5px solid rgba(0,0,0,0.1); }
-        
-        .large-btn { width: 100%; background: var(--blue); color: #FFF; border: none; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600; transition: 0.2s; }
-        .large-btn:active { opacity: 0.7; }
+        .large-btn { width: 100%; background: var(--blue); color: #FFF; border: none; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600; }
         .arrow::after { content: "\203A"; color: #C4C4C6; font-size: 22px; margin-left: 8px; }
     </style>
 </head>
@@ -32,46 +29,53 @@
     <h1>UI elements</h1>
 
     <div class="group">
-        <div class="row" onclick="triggerAction('accordion', 'acc1')">
-            <span>Primary</span>
-            <div class="arrow"></div>
+        <div class="row" onclick="window.triggerAction('accordion', 'acc1')">
+            <span>Primary</span><div class="arrow"></div>
         </div>
         <div id="acc1" class="details"></div>
         
-        <div class="row" onclick="triggerAction('accordion', 'acc2')">
-            <span>Secondary</span>
-            <div class="arrow"></div>
+        <div class="row" onclick="window.triggerAction('accordion', 'acc2')">
+            <span>Secondary</span><div class="arrow"></div>
         </div>
         <div id="acc2" class="details"></div>
     </div>
 
     <div class="group">
         <div class="row" style="border:none">
-            <span id="turt" style="display:inline-block; transition:0.1s;">🐢</span>
+            <span id="turt" style="display:inline-block; font-size:20px;">🐢</span>
             <div class="slider-container">
-                <input type="range" class="slider-input" min="0" max="100" value="40" oninput="triggerAction('slider', this.value)">
+                <input type="range" class="slider-input" min="0" max="100" value="40" oninput="window.triggerAction('slider', this.value)">
             </div>
-            <span id="rabb" style="display:inline-block; transition:0.1s;">🐇</span>
+            <span id="rabb" style="display:inline-block; font-size:20px;">🐇</span>
         </div>
     </div>
 
-    <button id="mainBtn" class="large-btn" onclick="triggerAction('button', 'click')">Large Button</button>
+    <button id="mainBtn" class="large-btn" onclick="window.triggerAction('button', 'click')">Large Button</button>
 
     <script type="module">
         import init, { handle_ui_action } from './wasm_pkg/vuzt_wasm.js';
 
+        let wasmReady = false;
+
         async function run() {
-            await init();
-            console.log("Rust WASM Engine: Online");
+            try {
+                await init();
+                wasmReady = true;
+                console.log("WASM Loaded");
+            } catch (e) {
+                console.error("WASM Load Failed", e);
+            }
         }
         run();
 
+        // Pastikan fungsi terdaftar di window agar onclick bisa memanggilnya
         window.triggerAction = (tag, val) => {
-            // Semua aksi dikirim ke Rust WASM
+            if (!wasmReady) return;
+            
             const response = handle_ui_action(tag, val);
 
             if (tag === 'slider') {
-                console.log(response);
+                // Respons slider biasanya hanya visual (sudah dihandle di rust)
             } else if (tag === 'accordion') {
                 const el = document.getElementById(val);
                 const isVisible = el.style.display === 'block';
@@ -79,11 +83,10 @@
                 if (!isVisible) el.innerText = response;
             } else if (tag === 'button') {
                 const btn = document.getElementById('mainBtn');
-                const oldTxt = btn.innerText;
                 btn.innerText = response;
                 btn.style.backgroundColor = "#34C759";
                 setTimeout(() => { 
-                    btn.innerText = oldTxt; 
+                    btn.innerText = "Large Button"; 
                     btn.style.backgroundColor = "#007AFF";
                 }, 2000);
             }
