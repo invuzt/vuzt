@@ -23,24 +23,20 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      # Kita hanya siapkan SDK, biarkan Gradle download NDK sendiri
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Android SDK & NDK
+        run: |
+          # 1. Terima lisensi
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+          
+          # 2. Download NDK secara manual (VERSI SPESIFIK)
+          echo "Downloading NDK 25.1.8937393..."
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;25.1.8937393"
+          
+          # 3. Set environment variable agar Gradle melihatnya
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/25.1.8937393" >> $GITHUB_ENV
 
       - name: Build with Gradle
         run: |
-          # Hapus local.properties agar tidak ada info folder yang salah/hardcoded
-          rm -f local.properties
-          
           chmod +x gradlew
-          # Tambahkan flag untuk menerima lisensi SDK secara otomatis
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          
+          # Kita tidak pakai local.properties, kita pakai environment variable saja
           ./gradlew assembleDebug
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/app-debug.apk
