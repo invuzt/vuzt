@@ -1,0 +1,5 @@
+rust_engine/target/
+app/build/
+.gradle/
+local.properties
+*.apk
